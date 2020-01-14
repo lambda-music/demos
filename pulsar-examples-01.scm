@@ -132,6 +132,10 @@
 
 (if (not (open?))
   (begin
+   (import (pulsar gui))
+   (import (pulsar xnoop))
+   (import (pulsar notes))
+   (import (pulsar music))
    (source "./ats's-drumkit.scm" )
    (source "./pulsar-pattern-generator.scm" )
    (create-gui)
