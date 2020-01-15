@@ -240,19 +240,4 @@
 
 
 
-(if (not (open?))
-  (begin 
-    ;(close)
-    (open     "pulsar" )
-    (open-output   "out-h2" "out-counter" "out-fluidsynth" )
-    (open-input    "MIDI Input0"  "MIDI Input1"  )
-    (set-tempo 120)
-
-    (connect  "pulsar:out-h2"         "hydrogen-midi:RX" )
-    (connect  "pulsar:out-counter"    "qsynth-counter:midi" )
-    (connect  "pulsar:out-fluidsynth" "qsynth-fluidsynth:midi" )
-
-    (rewind)))
-
-
 ; vim: filetype=scheme expandtab :

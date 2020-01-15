@@ -16,6 +16,14 @@
 (import (srfi 1))
 (import (kawa pprint))
 
+; ADDED (Wed, 15 Jan 2020 13:32:31 +0900)
+(import (pulsar gui))
+(import (pulsar xnoop))
+(import (pulsar notes))
+(import (pulsar music))
+(source "ats's-drumkit.scm" )
+(source "quasijazzer-band/init.scm")
+
 ;==============================================================================================
 ;
 ;==============================================================================================

@@ -1,13 +1,13 @@
 (if (not (open?))
   (begin
-   (import (pulsar gui))
-   (import (pulsar xnoop))
-   (import (pulsar notes))
-   (import (pulsar music))
-   (source "./ats's-drumkit.scm" )
    (source "./pulsar-pattern-generator.scm" )
+   (session-start)
    (create-gui)
    ))
+
+(if (open?)
+    (session-end))
+
 (set-playing)
 
 (if #f (begin
@@ -63,11 +63,6 @@
                                            (xnew SimpleTrack (new-track-id) 'inst-Ride-Rock 'pns-basic-4-swing "(cl  2/4 2/4 2/4 4/4  )" "(+ 0/4 0 )" 4 1)
                                            (xnew SimpleTrack (new-track-id) 'inst-sn-33 'pns-basic-one "'( 2/4 2/4 2/4 3/4 )" "(+ 0/8 0 )" 1 1))
          ))
-
-
-
-
-
 
 
 
