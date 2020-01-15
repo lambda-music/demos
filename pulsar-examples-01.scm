@@ -1,4 +1,22 @@
-( aa )
+(if (not (open?))
+  (begin
+   (import (pulsar gui))
+   (import (pulsar xnoop))
+   (import (pulsar notes))
+   (import (pulsar music))
+   (source "./ats's-drumkit.scm" )
+   (source "./pulsar-pattern-generator.scm" )
+   (create-gui)
+   ))
+(set-playing)
+
+
+
+(call-with-input-string (prettify v) (lambda (x)
+                                  (display (read x))
+                                  (newline)
+                                  ))
+
 (((((java.lang.Class:get-protection-domain
      pulsar.Pulsar):get-code-source):get-location):to-URI):get-path)
 
@@ -6,17 +24,6 @@
 
 ( mov! 0 (sca! 1/1
       (velo: << notation (iota 16) pos: >> (cl 0.6 ) )))
-#|
-
-10 ' ( ( ('pos . 20) ( .   (('pos . 11) ('velo . 0.6))
- ('velo . 0.6) (('pos . 12) ('velo . 0.6)) (('pos . 13) ('velo . 0.6))
- (('pos . 14) ('velo . 0.6)) (('pos . 15) ('velo . 0.6))
- (('pos . 16) ('velo . 0.6)) (('pos . 18) ('velo . 0.6))
- (('pos . 17) ('velo . 0.6)) (('pos . 19) ('velo . 0.6))
- (('velo . 0.6)) (('pos . 21) ('velo . 0.6))
- (('pos . 22) ('pos . 23)) (('velo . 0.6) ('velo . 0.6))
- (('pos . 24) ('velo . 0.6)) (('pos . 25) ('velo . 0.6)))
-|#
 
 (n note: (lambda(x) (* x 2) ) 
        (n type: 'note note: >> 61 62 63 ))
@@ -111,35 +118,7 @@
 (help hello)
 
 
-                     
 
-
-
-(#|
-   ========== THE MANUAL OF PULSAR LISP SCHEME MUSIC SEQUENCER =========
-   
-   NAME: GET-TRACK
-   
-   SYNOPSIS: (get-track [track-spec]...)::void
-   
-   DESCRIPTION: ||get-track|| retrieves multiple tracks which
-   are specified as track-spec arguments. The tracks are stored
-   in a linked list. See (help about-track-spec). In case the
-   current sequencer system has not established any connection to the
-   JACK, it throws an exception.
-   ======================================================================
-  |# help about-intro )
-
-(if (not (open?))
-  (begin
-   (import (pulsar gui))
-   (import (pulsar xnoop))
-   (import (pulsar notes))
-   (import (pulsar music))
-   (source "./ats's-drumkit.scm" )
-   (source "./pulsar-pattern-generator.scm" )
-   (create-gui)
-   ))
 
 (close)
 

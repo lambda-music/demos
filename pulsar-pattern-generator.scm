@@ -100,7 +100,7 @@
                                                          ;then
                                                          (begin
                                                            (if DEBUG (begin
-                                                                       (display '=========3)
+                                                                       (console:info '=========3)
                                                                        (newline)
                                                                        ))
                                                            (if (<= (length (cdr trackset-list)) 1 )
@@ -125,8 +125,8 @@
                                                              (if t
                                                                (begin
                                                                  (if DEBUG (begin
-                                                                             (display '=========)
-                                                                             (display ( t 'trackset-name ) )
+                                                                             (console:info '=========)
+                                                                             (console:info ( t 'trackset-name ) )
                                                                              (newline)
                                                                              ))
                                                                  (t 'update-trackset-view)
@@ -158,7 +158,7 @@
                                                        ))))
       (self 'define 'method 'clear-trackset-view   (lambda ( self ) 
                                                      (if DEBUG (begin 
-                                                                 (display 'clear-trackset-view)
+                                                                 (console:info 'clear-trackset-view)
                                                                  (newline) ))
                                                      (gui-build
                                                        (gui-get main-pane "TRACKS")
@@ -188,7 +188,7 @@
                                                              (self '*current-trackset trackset))
                                                            ;else
                                                            (begin
-                                                             (display "could not find the specified trackset. ignored.")
+                                                             (console:info "could not find the specified trackset. ignored.")
                                                              (newline)))
                                                          ;else
                                                          (self '*current-trackset trackset))))))
@@ -360,7 +360,7 @@
 
       ; public
       (self 'define 'method 'update-trackset-view (lambda ( self ) 
-                                                    ;; (display 'update-trackset-view) (newline)
+                                                    ;; (console:info 'update-trackset-view) (newline)
                                                     (apply gui-build (append
                                                                         (list (gui-get main-pane  "TRACKS") )
                                                                         (list 'remove-all )
@@ -383,28 +383,14 @@
 
       ; public
       (self 'define 'method 'trackset-to-source (lambda args
-                                                  (do-with-preserve-print-right-margin 500
-                                                    (lambda ()
-                                                      (prettify
-                                                        (apply string-append
-                                                               (append
-                                                                 (list "((trackset-manager 'new-trackset) 'add-track " )
-                                                                 (map (lambda(x)
-                                                                        (if DEBUG (begin
-                                                                                    (display x)
-                                                                                    (newline)
-                                                                                    ))
-                                                                        (string-append
-                                                                          "\n"
-                                                                          (pretty-print (x 'track-to-source ))))
-                                                                      (if (<= (length args) 1 )
-                                                                        (reverse (cdr track-list))
-                                                                        ; the first element is self so go to the next element.
-                                                                        (cdr args )))
-                                                                 (list ") " ))))))))
-
-
-
+                                                  (append `((trackset-manager 'new-trackset) 
+                                                            'add-track)
+                                                          (map (lambda(x)
+                                                                 (x 'track-to-source ))
+                                                               (if (<= (length args) 1 )
+                                                                 (reverse (cdr track-list))
+                                                                 ; the first element is self so go to the next element.
+                                                                 (cdr args ))))))
       )))
 
 
@@ -458,7 +444,7 @@
                                   (list 
                                     (lambda (sel cmd usr src evt ) 
                                       (if DEBUG (begin
-                                                  (display cmd)
+                                                  (console:info cmd)
                                                   (newline) 
                                                   ))
                                       (self 'write field-name usr )
@@ -486,7 +472,9 @@
                                                                  ;;; (Thu, 08 Aug 2019 18:50:26 +0900)
                                                           )))
                                            'parallel (get-track 'main) beat-offset)
-                                (remove-track (get-track track-id)))))))
+                                (let ((t (get-track track-id)))
+                                  (if t (remove-track t ))))
+                              #t))))
 
       (self 'define 'field 'track-id             track-id )
       (self 'define 'field 'enabled              #f )
@@ -522,7 +510,7 @@
                                                               2 )
                                                             (list (lambda (sel cmd usr src evt ) 
                                                                     (if DEBUG (begin
-                                                                                (display cmd)
+                                                                                (console:info cmd)
                                                                                 (newline) 
                                                                                 ))
                                                                     (self 'write 'instrument usr )
@@ -543,7 +531,7 @@
                                                        (list
                                                          (lambda (sel cmd usr src evt ) 
                                                            (if DEBUG (begin
-                                                                       (display cmd)
+                                                                       (console:info cmd)
                                                                        (newline) 
                                                                        ))
                                                            (self 'write 'pns-pattern usr )
@@ -558,7 +546,7 @@
                                                             (cons "6 Swing"  'pns-basic-6-swing )
                                                             (cons "Counting" 'pns-counting )
                                                             (lambda (sel cmd usr src evt ) 
-                                                              (display cmd)
+                                                              (console:info cmd)
                                                               (newline) 
                                                               (self 'write 'pns-pattern usr )
                                                               (update-inst)))
@@ -580,7 +568,7 @@
                                                    (gui-new 'text-field  "" 32 
                                                             (lambda (sel cmd usr src evt ) 
                                                               (if DEBUG (begin
-                                                                          (display cmd)
+                                                                          (console:info cmd)
                                                                           (newline) 
                                                                           ))
                                                               (self 'write 'velo-values cmd )
@@ -591,7 +579,7 @@
                                                    (gui-new 'text-field  "" 12 
                                                             (lambda (sel cmd usr src evt ) 
                                                               (if DEBUG (begin
-                                                                          (display cmd)
+                                                                          (console:info cmd)
                                                                           (newline) 
                                                                           ))
                                                               (self 'write 'beat-offset cmd )
@@ -609,22 +597,16 @@
                                                      (x:setMaximumSize (java.awt.Dimension 10000 50)))
                                                    ))
 
-      (self 'define 'method 'hello               (lambda (self) (display 'hello)(newline) )  )
+      (self 'define 'method 'hello               (lambda (self) (console:info 'hello)(newline) )  )
 
       ; public
       (self 'define 'method 'track-to-source     (lambda (self) 
                                                    (let ((proc-symbol (lambda(v)
-                                                                        (string-append 
-                                                                          "'" 
-                                                                          (symbol->string v))))
+                                                                        `(quote ,v)))
                                                          (proc-string (lambda(v)
-                                                                        (string-append 
-                                                                          "\"" 
-                                                                          v
-                                                                          "\"" 
-                                                                          )))
+                                                                        v))
                                                          (proc-number (lambda(v)
-                                                                        (number->string v)))
+                                                                        v))
                                                          )
                                                      `(xnew SimpleTrack 
                                                             ;,(proc-symbol (self 'read 'track-id     ))
@@ -640,11 +622,11 @@
                                                    ; update Act label which denotes 'enabled
                                                    (let ((label (gui-get (self 'gui) 'enabled)))
                                                      (if DEBUG (begin
-                                                                 (display 'label)
-                                                                 (display label)
+                                                                 (console:info 'label)
+                                                                 (console:info label)
                                                                  (newline)
 
-                                                                 (display (self 'enabled))
+                                                                 (console:info (self 'enabled))
                                                                  (newline)
                                                                  ))
                                                      (if label 
@@ -799,7 +781,8 @@
           (gui-new 'button "Source"     (lambda (sel cmd usr src evt)
                                           (gui-insert-text
                                             (string-append
-                                              ((trackset-manager 'current-trackset) 'trackset-to-source )
+                                              (prettify
+                                              ((trackset-manager 'current-trackset) 'trackset-to-source ))
                                               "\n")
                                           )))
 
