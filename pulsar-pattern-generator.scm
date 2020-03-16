@@ -31,7 +31,7 @@
 (define main-pane ::javax.swing.JPanel #!null )
 (define main-frame ::javax.swing.JFrame #!null )
 
-(define DEBUG #f)
+(define DEBUG #t)
 (define TracksetManager  #f)
 (define trackset-manager #f)
 (define Trackset         #f)
@@ -66,9 +66,9 @@
                          (string->symbol (new-track-id-string "track-")))))
 
 ; NOTE : (Sat, 20 Jul 2019 08:54:32 +0900)
-; JavaScript has to create a function and execute it in order to create a
-; closure. Lisp Scheme does not have to. In Scheme, you can create closures
-; whenever by using 'let' statement.
+; While JavaScript needs to create a function and execute it in order to create 
+; a closure, Scheme does not need to follow those steps. In Scheme, you can 
+; create closures by using 'let' statement.
 
 ;==============================================================================================
 (set! TracksetManager 
@@ -871,7 +871,12 @@
     ))
 
 (newline)
-; (create-gui)
+
+(if #f
+    (begin
+     (session-start)
+     (create-gui)))
+
 
 ; (display-warn "===================================" );
 ; (display-warn "pulsar-code-generator(2)" );
