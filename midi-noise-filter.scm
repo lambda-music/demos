@@ -1,4 +1,4 @@
-#!/home/ats/bin/lamu -e
+#!/usr/local/bin/lamu -e
 ; "create scheme + kawapad $*{$} + repl"
 "create scheme + kawapad $*{$} + repl $*{$}"
 
