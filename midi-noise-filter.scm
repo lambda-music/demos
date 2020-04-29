@@ -1,5 +1,4 @@
 #!/usr/local/bin/lamu -e
-; "create scheme + kawapad $*{$} + repl"
 "create scheme + kawapad $*{$} + repl $*{$}"
 ; (close)
 
@@ -11,7 +10,7 @@
   (import (lamu pulsar))
   (import (srfi 1))
  
-  (define thre (* 0 256))
+  (define thre (* 2 256))
   (define curve1 (lambda (x)
                    (- 1 (sqrt (- 1 (expt x 2))))))
   (define curve2 (lambda (x)
