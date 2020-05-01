@@ -2,6 +2,25 @@
 "create scheme + kawapad $*{$} + repl $*{$}"
 ; (close)
 
+#|
+ | === How to Calulate the Proper Threshold Value ===
+ |
+ | 60sec/BPM == NOTE-LEN(sec)
+ | NOTE-LEN * x ==  1sec
+ | x == 1sec/NOTE-LEN
+ | 
+ | ; The `thre` parameter should be specified by length of a bar
+ | ; In this case, we can presume the current time signature is 4/4.
+ | ; That is, it should be divided by 4.
+ |
+ | (1sec/note-len)/4 == thre
+ | (1sec/(60sec/BPM))/4==thre
+ | bpm/60 * 1/4
+ | bpm/240=thre
+ | 
+ | (Sat, 02 May 2020 04:53:14 +0900)
+ |#
+
 (begin
   (import(lamu help))
   (import (lamu scheme))
@@ -10,7 +29,13 @@
   (import (lamu pulsar))
   (import (srfi 1))
  
+  ; === Defining the Threshold Value ===
+  ; `thre` is the minimum note length
+  ; the MIDI notes which is shorter than this value
+  ; will be removed with this filter program.
   (define thre (* 2 256))
+
+  ; === Defining Velocity Curve ===
   (define curve1 (lambda (x)
                    (- 1 (sqrt (- 1 (expt x 2))))))
   (define curve2 (lambda (x)
