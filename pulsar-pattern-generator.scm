@@ -17,12 +17,14 @@
 (import (kawa pprint))
 
 ; ADDED (Wed, 15 Jan 2020 13:32:31 +0900)
-(import (lamu gui))
+(import (lamu utils gui))
 (import (lamu xnoop))
 (import (lamu notes))
 (import (lamu music))
-(source "ats's-drumkit.scm" )
-(source "quasijazzer-band/init.scm")
+(import (lamu procs))
+(import (lamu evaluators))
+(use "ats's-drumkit.scm" )
+(use "quasijazzer-band/init.scm")
 
 ;==============================================================================================
 ;
