@@ -13,16 +13,10 @@
 ;
 ;==============================================================================================
 
-(import (srfi 1))
-(import (kawa pprint))
-
 ; ADDED (Wed, 15 Jan 2020 13:32:31 +0900)
+(import (lamu lang))
 (import (lamu utils gui))
 (import (lamu xnoop))
-(import (lamu notes))
-(import (lamu music))
-(import (lamu procs))
-(import (lamu evaluators))
 (use "ats's-drumkit.scm" )
 (use "quasijazzer-band/init.scm")
 
@@ -110,7 +104,7 @@
                                                          ;then
                                                          (begin
                                                            (if DEBUG (begin
-                                                                       (console:info '=========3)
+                                                                       ((current-kawapad):console:info '=========3)
                                                                        (newline)
                                                                        ))
                                                            (if (<= (length (cdr trackset-list)) 1 )
@@ -135,8 +129,8 @@
                                                              (if t
                                                                (begin
                                                                  (if DEBUG (begin
-                                                                             (console:info '=========)
-                                                                             (console:info ( t 'trackset-name ) )
+                                                                             ((current-kawapad):console:info '=========)
+                                                                             ((current-kawapad):console:info ( t 'trackset-name ) )
                                                                              (newline)
                                                                              ))
                                                                  (t 'update-trackset-view)
@@ -168,7 +162,7 @@
                                                        ))))
       (self 'define 'method 'clear-trackset-view   (lambda ( self ) 
                                                      (if DEBUG (begin 
-                                                                 (console:info 'clear-trackset-view)
+                                                                 ((current-kawapad):console:info 'clear-trackset-view)
                                                                  (newline) ))
                                                      (gui-build
                                                        (gui-get main-pane "TRACKS")
@@ -198,7 +192,7 @@
                                                              (self '*current-trackset trackset))
                                                            ;else
                                                            (begin
-                                                             (console:info "could not find the specified trackset. ignored.")
+                                                             ((current-kawapad):console:info "could not find the specified trackset. ignored.")
                                                              (newline)))
                                                          ;else
                                                          (self '*current-trackset trackset))))))
@@ -370,7 +364,7 @@
 
       ; public
       (self 'define 'method 'update-trackset-view (lambda ( self ) 
-                                                    ;; (console:info 'update-trackset-view) (newline)
+                                                    ;; ((current-kawapad):console:info 'update-trackset-view) (newline)
                                                     (apply gui-build (append
                                                                         (list (gui-get main-pane  "TRACKS") )
                                                                         (list 'remove-all )
@@ -454,7 +448,7 @@
                                   (list 
                                     (lambda (sel cmd usr src evt ) 
                                       (if DEBUG (begin
-                                                  (console:info cmd)
+                                                  ((current-kawapad):console:info cmd)
                                                   (newline) 
                                                   ))
                                       (self 'write field-name usr )
@@ -520,7 +514,7 @@
                                                               2 )
                                                             (list (lambda (sel cmd usr src evt ) 
                                                                     (if DEBUG (begin
-                                                                                (console:info cmd)
+                                                                                ((current-kawapad):console:info cmd)
                                                                                 (newline) 
                                                                                 ))
                                                                     (self 'write 'instrument usr )
@@ -541,7 +535,7 @@
                                                        (list
                                                          (lambda (sel cmd usr src evt ) 
                                                            (if DEBUG (begin
-                                                                       (console:info cmd)
+                                                                       ((current-kawapad):console:info cmd)
                                                                        (newline) 
                                                                        ))
                                                            (self 'write 'pns-pattern usr )
@@ -556,7 +550,7 @@
                                                             (cons "6 Swing"  'pns-basic-6-swing )
                                                             (cons "Counting" 'pns-counting )
                                                             (lambda (sel cmd usr src evt ) 
-                                                              (console:info cmd)
+                                                              ((current-kawapad):console:info cmd)
                                                               (newline) 
                                                               (self 'write 'pns-pattern usr )
                                                               (update-inst)))
@@ -578,7 +572,7 @@
                                                    (gui-new 'text-field  "" 32 
                                                             (lambda (sel cmd usr src evt ) 
                                                               (if DEBUG (begin
-                                                                          (console:info cmd)
+                                                                          ((current-kawapad):console:info cmd)
                                                                           (newline) 
                                                                           ))
                                                               (self 'write 'velo-values cmd )
@@ -589,7 +583,7 @@
                                                    (gui-new 'text-field  "" 12 
                                                             (lambda (sel cmd usr src evt ) 
                                                               (if DEBUG (begin
-                                                                          (console:info cmd)
+                                                                          ((current-kawapad):console:info cmd)
                                                                           (newline) 
                                                                           ))
                                                               (self 'write 'beat-offset cmd )
@@ -607,7 +601,7 @@
                                                      (x:setMaximumSize (java.awt.Dimension 10000 50)))
                                                    ))
 
-      (self 'define 'method 'hello               (lambda (self) (console:info 'hello)(newline) )  )
+      (self 'define 'method 'hello               (lambda (self) ((current-kawapad):console:info 'hello)(newline) )  )
 
       ; public
       (self 'define 'method 'track-to-source     (lambda (self) 
@@ -632,11 +626,11 @@
                                                    ; update Act label which denotes 'enabled
                                                    (let ((label (gui-get (self 'gui) 'enabled)))
                                                      (if DEBUG (begin
-                                                                 (console:info 'label)
-                                                                 (console:info label)
+                                                                 ((current-kawapad):console:info 'label)
+                                                                 ((current-kawapad):console:info label)
                                                                  (newline)
 
-                                                                 (console:info (self 'enabled))
+                                                                 ((current-kawapad):console:info (self 'enabled))
                                                                  (newline)
                                                                  ))
                                                      (if label 
@@ -719,12 +713,13 @@
 ;          +track
 ;          +track
 
+(import (lamu utils gui))
 (define create-gui
   (lambda()
-    (gui-clear)
-    (gui-frame-width 800)
-    (gui-frame-height 600)
-    (gui-repaint (gui-get-pane) )
+;    (gui-remove-all (gui-get-pane))
+;    (gui-frame-width 800)
+;    (gui-frame-height 600)
+;    (gui-repaint (gui-get-pane) )
 
     (set! main-frame  (gui-new 'frame ))
     (set! main-pane   (gui-new 'panel))
@@ -810,14 +805,14 @@
           )
         'name "TRACK-CONSTRUCTOR"
         (gui-build
-          (gui-new 'panel 'box javax.swing.BoxLayout:X_AXIS )
-          (lambda (self ::javax.swing.JPanel)
-            (self:setBorder (javax.swing.BorderFactory:createTitledBorder "Track Construction" )))
-          ; (lambda (self) (self:setMaximumSize (java.awt.Dimension 100 100)))
-          (gui-new 'button "Simple-Track"  (lambda (sel cmd usr src evt) 
-                                             ((trackset-manager 'current-trackset) 'add-track 
-                                                                                   (xnew SimpleTrack (new-track-id)))))
-          (javax.swing.Box:createHorizontalGlue ))
+         (gui-new 'panel 'box javax.swing.BoxLayout:X_AXIS )
+         (lambda (self ::javax.swing.JPanel)
+           (self:setBorder (javax.swing.BorderFactory:createTitledBorder "Track Construction" )))
+         ; (lambda (self) (self:setMaximumSize (java.awt.Dimension 100 100)))
+         (gui-new 'button "Simple-Track"  (lambda (sel cmd usr src evt) 
+                                            ((trackset-manager 'current-trackset) 'add-track 
+                                               (xnew SimpleTrack (new-track-id)))))
+         (javax.swing.Box:createHorizontalGlue ))
 
         'name "TRACKSET-SELECTION"
         (gui-build

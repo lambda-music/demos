@@ -1,14 +1,16 @@
 (if (not (open?))
   (begin
-   (source "./pulsar-pattern-generator.scm" )
+   (import (lamu lang))
+   (import (lamu utils gui))
+   (use "pulsar-pattern-generator.scm" )
    (session-start)
-   (create-gui)
-   ))
+   (create-gui)))
 
 (if (open?)
     (session-end))
 
-(set-playing)
+(set-playing #t)
+(playing?)
 
 (if #f (begin
         ((trackset-manager 'new-trackset) 'add-track 
