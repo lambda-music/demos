@@ -18,7 +18,8 @@
 (import (lamu utils gui))
 (import (lamu xnoop))
 (use "ats's-drumkit.scm" )
-(use "quasijazzer-band/init.scm")
+(use "libquasijazzer/init.scm")
+(define pulsar-tethered (tether))
 
 ;==============================================================================================
 ;
@@ -27,7 +28,7 @@
 (define main-pane ::javax.swing.JPanel #!null )
 (define main-frame ::javax.swing.JFrame #!null )
 
-(define DEBUG #t)
+(define DEBUG #f)
 (define TracksetManager  #f)
 (define trackset-manager #f)
 (define Trackset         #f)
@@ -41,12 +42,15 @@
 ; UTIL
 ;==============================================================================================
 (define create-new-counter (lambda ()
+                             (pulsar-tethered)
                              (let* ((new-number-counver 0 )
                                    (new-number (lambda()
+                                                 (pulsar-tethered)
                                                  (let (( v new-number-counver ))
                                                    (set! new-number-counver (+ v 1))
                                                    v)))
                                    (new-id (lambda (#!optional (prefix "") (suffix "" ))
+                                             (pulsar-tethered)
                                              (string-append
                                                prefix
                                                (number->string (new-number))
@@ -59,6 +63,7 @@
 (define new-trackset-id (create-new-counter))
 (define new-track-id (let ((new-track-id-string (create-new-counter)))
                        (lambda ()
+                         (pulsar-tethered)
                          (string->symbol (new-track-id-string "track-")))))
 
 ; NOTE : (Sat, 20 Jul 2019 08:54:32 +0900)
@@ -69,6 +74,7 @@
 ;==============================================================================================
 (set! TracksetManager 
   (lambda (self)
+    (pulsar-tethered)
     (let ((trackset-list (cons 'trackset-list '()))
           (track-factory-list (cons 'track-factory-list '() ))
           )
@@ -76,6 +82,7 @@
       (self 'define 'field '*current-trackset #f )
 
       (self 'define 'method 'add-trackset        (lambda(self trackset) 
+                                                   (pulsar-tethered)
                                                    (begin
                                                      (set-cdr! trackset-list
                                                                (append 
@@ -90,6 +97,7 @@
                                                    ))
 
       (self 'define 'method 'remove-trackset     (lambda(self trackset) 
+                                                   (pulsar-tethered)
                                                    (if trackset 
                                                      ; process it only if trackset is an object; 
                                                      ; if no trackset exists on the list, this will be #f.
@@ -161,6 +169,7 @@
                                                        
                                                        ))))
       (self 'define 'method 'clear-trackset-view   (lambda ( self ) 
+                                                     (pulsar-tethered)
                                                      (if DEBUG (begin 
                                                                  ((current-kawapad):console:info 'clear-trackset-view)
                                                                  (newline) ))
@@ -170,6 +179,7 @@
                                                        'revalidate)))
 
       (self 'define 'method 'current-trackset    (lambda (self . args )
+                                                   (pulsar-tethered)
                                                    (if (= 0 (length args))
                                                      ; read
                                                      (self '*current-trackset )
@@ -197,9 +207,11 @@
                                                          ;else
                                                          (self '*current-trackset trackset))))))
       ; (self 'define 'method 'for-each-trackset    (lambda (self p)
+                                                      (pulsar-tethered)
       ;                                               (for-each p (cdr trackset-list ))))
 
       (self 'define 'method 'update-trackset-buttons (lambda (self selected-trackset )
+                                                       (pulsar-tethered)
                                                        (if (not selected-trackset ) 
                                                          (set! selected-trackset (self 'current-trackset )))
                                                        (for-each (lambda (e)
@@ -208,6 +220,7 @@
                                                                      ((as javax.swing.AbstractButton (e 'gui)):setSelected #f)))
                                                                  (cdr trackset-list ))))
       (self 'define 'method 'register-track-factory (lambda (self track-factory)
+                                                      (pulsar-tethered)
                                                       (set-cdr! track-factory-list
                                                                 (cons track-factory track-factory-list))
                                                       
@@ -218,6 +231,7 @@
                                                         )))
 
       (self 'define 'method 'new-trackset (lambda (self) 
+                                            (pulsar-tethered)
                                             (let ((trackset0 (xnew Trackset       (new-trackset-id "trackset" ))))
                                               (trackset-manager 'add-trackset     trackset0)
                                               (trackset-manager 'current-trackset trackset0)
@@ -233,6 +247,7 @@
 
 (set! trackset-manager (xnew TracksetManager ))
 (define do-with-preserve-print-right-margin (lambda ( print-right-margin proc )
+                                              (pulsar-tethered)
                                               (let ((old-value *print-right-margin* ))
                                                 (set! *print-right-margin* print-right-margin)
                                                 (let ((result (proc)))
@@ -244,29 +259,34 @@
 ;==============================================================================================
 (set! Trackset 
   (lambda ( self name )
+    (pulsar-tethered)
     ; DON'T FORGET CDR BEFORE USE "track-list" 
     (let ((track-list (cons 'trackset-head '())))
 
       (self 'define 'field 'trackset-name          name )
       (self 'define 'field 'track-list             track-list )
       (self 'define 'field 'gui-is-button-selected (lambda (self value)
+                                                     (pulsar-tethered)
                                                      ((as javax.swing.AbstractButton (self 'gui )) :setSelected value)))
       ; public
       (self 'define 'field 'gui (begin 
-                                  (let ((b::javax.swing.JToggleButton (javax.swing.JToggleButton (as java.lang.String (self 'trackset-name)) )))
-                                    (b:addActionListener
-                                      (object (java.awt.event.ActionListener)
-                                              ((actionPerformed (e ::java.awt.event.ActionEvent))
-                                               ::void
-                                               (if (b:isSelected)
-                                                 (begin
-                                                   (trackset-manager 'update-trackset-buttons self)
-                                                   (trackset-manager 'current-trackset self )
-                                                   (self 'update-trackset-view )))
-                                               )))
-                                    b)
-                                  ))
+                                 (let ((b::javax.swing.JToggleButton (javax.swing.JToggleButton (as java.lang.String (self 'trackset-name)) )))
+                                   (b:addActionListener
+                                    (object (java.awt.event.ActionListener)
+                                      (tethered (tether))
+                                      ((actionPerformed (e ::java.awt.event.ActionEvent))
+                                       ::void
+                                         (tethered)
+                                         (if (b:isSelected)
+                                             (begin
+                                              (trackset-manager 'update-trackset-buttons self)
+                                              (trackset-manager 'current-trackset self )
+                                              (self 'update-trackset-view )))
+                                         )))
+                                   b)
+                                 ))
       (self 'define 'method 'add-track-2 (lambda (self track) 
+                                           (pulsar-tethered)
                                          ; Add the passed track to the list.
                                          (set-cdr! track-list (cons track (cdr track-list)))
 
@@ -285,6 +305,7 @@
                                          ))
 
       (self 'define 'method 'add-track  (lambda (self . tracks) 
+                                          (pulsar-tethered)
                                                (let add-track-loop ((ptrack tracks))
                                                  (if (null? ptrack)
                                                    ; end loop
@@ -309,15 +330,18 @@
                                                ))
 
       (self 'define 'method 'set-enabled-to-all-track  (lambda (self value)
+                                                         (pulsar-tethered)
                                                          (for-each (lambda (e)
                                                                      (e 'set-enabled value)
                                                                      (e 'update-track-view )) 
                                                                    (cdr track-list) )))
       ; public
       (self 'define 'method 'set-enabled  (lambda (self value)
+                                            (pulsar-tethered)
                                             (self 'set-enabled-to-all-track value)))
 
       (self 'define 'method 'remove-track (lambda (self . tracks) 
+                                            (pulsar-tethered)
                                             (let remove-track-loop ((ptrack tracks))
                                               (if (null? ptrack ) 
                                                 ;then
@@ -341,6 +365,7 @@
                                                   (remove-track-loop (cdr ptrack)))))))
 
       ; (self 'define 'method 'add-all-tracks (lambda (self . args )
+      ;                                         (pulsar-tethered)
       ;                                         (for-each (lambda (track) 
       ;                                                     (self 'add-track track))
       ;                                                   (if (eqv? 0 (length args ) )
@@ -348,6 +373,7 @@
       ;                                                     args))))
 
       (self 'define 'method 'remove-all-tracks (lambda (self . args)
+                                                 (pulsar-tethered)
                                                  (for-each (lambda (track)
                                                              (self 'remove-track track))
                                                            (if (eqv? 0 (length args ) )
@@ -357,6 +383,7 @@
 
       ; public
       (self 'define 'method 'clear-trackset       (lambda (self)
+                                                    (pulsar-tethered)
                                                     (self 'remove-all-tracks)))
 
       ; Note that you have repaint,then revalidate. 
@@ -364,6 +391,7 @@
 
       ; public
       (self 'define 'method 'update-trackset-view (lambda ( self ) 
+                                                    (pulsar-tethered)                                                    
                                                     ;; ((current-kawapad):console:info 'update-trackset-view) (newline)
                                                     (apply gui-build (append
                                                                         (list (gui-get main-pane  "TRACKS") )
@@ -387,6 +415,7 @@
 
       ; public
       (self 'define 'method 'trackset-to-source (lambda args
+                                                  (pulsar-tethered)
                                                   (append `((trackset-manager 'new-trackset) 
                                                             'add-track)
                                                           (map (lambda(x)
@@ -405,11 +434,13 @@
 
 (define TrackFactoryAdapter 
   (lambda (self track-name track-class )
+    (pulsar-tethered)
     (self 'define 'field  'track-name    track-name    )
     (self 'define 'method 'track-class   track-class )
     (self 'define 'method 'create-track (lambda ( self )
                                           (gui-new 'button (cons track-name 'hello )
                                                    (lambda (sel cmd usr src evt ) 
+                                                     (pulsar-tethered)
                                                      ((trackset-manager 'current-trackset) 
                                                       'add-track (xnew track-class (new-track-id)))))))))
 
@@ -429,6 +460,7 @@
             (in-measure-count 1))
     (letrec ((make-combo 
                (lambda (field-name index) 
+                 (pulsar-tethered)
                  (apply gui-new (append 
                                   ; list No.0
                                   (list 'combo )
@@ -447,6 +479,7 @@
                                   ; list No.2
                                   (list 
                                     (lambda (sel cmd usr src evt ) 
+                                      (pulsar-tethered)
                                       (if DEBUG (begin
                                                   ((current-kawapad):console:info cmd)
                                                   (newline) 
@@ -454,6 +487,7 @@
                                       (self 'write field-name usr )
                                       (update-inst)))))))
              (update-inst (lambda ()
+                            (pulsar-tethered)
                             (let ((instrument    (self 'read 'instrument ))
                                   (pns-pattern   (self 'read 'pns-pattern ))
                                   (beat-count    (self 'read 'beat-count ))
@@ -464,20 +498,21 @@
                                     (eval (read (open-input-string (self 'read 'beat-offset)))))
                                   (enabled       (self 'read 'enabled)))
                               (if enabled
-                                (put-track (new-track track-id 
-                                                      (lambda ()
-                                                        (let ((notes (n-swing beat-count measure-count 
-                                                                              (bind-pns (cdr (sym2val instrument inst-list )) 
-                                                                                        (cdr (sym2val pns-pattern pns-list )))) ))
-                                                          ; The notes object contains non-note objects, too.
-                                                          ; So we have to filter the list. 
-                                                          (n velo: << (lm (+ 1  (nc notes)) velo-values ) notes)
-                                                          ;notes ;;; comment out now (n) duplicates notation data.
-                                                                 ;;; (Thu, 08 Aug 2019 18:50:26 +0900)
-                                                          )))
-                                           'parallel (get-track 'main) beat-offset)
+                                (exet (putt (newt track-id 
+                                                  (lambda ()
+                                                    (pulsar-tethered)
+                                                    (let ((notes (n-swing beat-count measure-count 
+                                                                          (bind-pns (cdr (sym2val instrument inst-list )) 
+                                                                                    (cdr (sym2val pns-pattern pns-list )))) ))
+                                                      ; The notes object contains non-note objects, too.
+                                                      ; So we have to filter the list. 
+                                                      (n velo: << (lm (+ 1  (nc notes)) velo-values ) notes)
+                                                      ;notes ;;; comment out now (n) duplicates notation data.
+                                                      ;;; (Thu, 08 Aug 2019 18:50:26 +0900)
+                                                      )))
+                                            'parallel (get-track 'main) beat-offset))
                                 (let ((t (get-track track-id)))
-                                  (if t (remove-track t ))))
+                                  (if t (exet (remove-track t )))))
                               #t))))
 
       (self 'define 'field 'track-id             track-id )
@@ -498,6 +533,7 @@
                                                    (gui-new 'label "Act" )
                                                    'name 'enabled
                                                    (gui-new 'check (lambda (sel cmd usr src evt )
+                                                                     (pulsar-tethered)
                                                                      (self 'write 'enabled sel)
                                                                      (update-inst)
                                                                      ))
@@ -513,6 +549,7 @@
                                                               (list 'selected) 
                                                               2 )
                                                             (list (lambda (sel cmd usr src evt ) 
+                                                                    (pulsar-tethered)
                                                                     (if DEBUG (begin
                                                                                 ((current-kawapad):console:info cmd)
                                                                                 (newline) 
@@ -534,6 +571,7 @@
                                                        
                                                        (list
                                                          (lambda (sel cmd usr src evt ) 
+                                                           (pulsar-tethered)
                                                            (if DEBUG (begin
                                                                        ((current-kawapad):console:info cmd)
                                                                        (newline) 
@@ -550,6 +588,7 @@
                                                             (cons "6 Swing"  'pns-basic-6-swing )
                                                             (cons "Counting" 'pns-counting )
                                                             (lambda (sel cmd usr src evt ) 
+                                                              (pulsar-tethered)
                                                               ((current-kawapad):console:info cmd)
                                                               (newline) 
                                                               (self 'write 'pns-pattern usr )
@@ -571,6 +610,7 @@
                                                    'name 'text-velo-values
                                                    (gui-new 'text-field  "" 32 
                                                             (lambda (sel cmd usr src evt ) 
+                                                              (pulsar-tethered)
                                                               (if DEBUG (begin
                                                                           ((current-kawapad):console:info cmd)
                                                                           (newline) 
@@ -582,6 +622,7 @@
                                                    'name 'text-beat-offset
                                                    (gui-new 'text-field  "" 12 
                                                             (lambda (sel cmd usr src evt ) 
+                                                              (pulsar-tethered)
                                                               (if DEBUG (begin
                                                                           ((current-kawapad):console:info cmd)
                                                                           (newline) 
@@ -591,6 +632,7 @@
                                                    (gui-new 'label "  " )
                                                    (gui-new 'button (cons "X" 'hello )
                                                             (lambda (sel cmd usr src evt ) 
+                                                              (pulsar-tethered)
                                                               #| (let ((gui (self 'gui)))
                                                                    (gui-remove-by-ref (gui-parent gui ) gui)) |#
                                                               (let ((current-trackset (trackset-manager 'current-trackset)))
@@ -598,13 +640,18 @@
                                                               (gui-repaint (self 'gui))))
                                                    (gui-new 'label " " )
                                                    (lambda (x) 
+                                                     (pulsar-tethered)
                                                      (x:setMaximumSize (java.awt.Dimension 10000 50)))
                                                    ))
 
-      (self 'define 'method 'hello               (lambda (self) ((current-kawapad):console:info 'hello)(newline) )  )
+      (self 'define 'method 'hello               (lambda (self) 
+                                                   (pulsar-tethered)
+                                                   ((current-kawapad):console:info 'hello)(newline) )  )
+                                                                            
 
       ; public
       (self 'define 'method 'track-to-source     (lambda (self) 
+                                                   (pulsar-tethered)
                                                    (let ((proc-symbol (lambda(v)
                                                                         `(quote ,v)))
                                                          (proc-string (lambda(v)
@@ -623,6 +670,7 @@
                                                             ,(proc-number (self 'read 'measure-count))))))
 
       (self 'define 'method 'update-track-view   (lambda (self)
+                                                   (pulsar-tethered)
                                                    ; update Act label which denotes 'enabled
                                                    (let ((label (gui-get (self 'gui) 'enabled)))
                                                      (if DEBUG (begin
@@ -637,6 +685,7 @@
                                                        (label:setSelected (self 'enabled))))
                                                    
                                                    (let ((update-value (lambda(id) 
+                                                                         (pulsar-tethered)
                                                                          (gui-set-selected 
                                                                            (gui-get (self 'read 'gui) id) 
                                                                            (self 'read id) 
@@ -658,6 +707,7 @@
                                                    ))
 
       (self 'define 'method 'set-enabled                   (lambda (self v)
+                                                             (pulsar-tethered)
                                                              (if (eqv? v (self 'enabled) )
                                                                ; do nothing
                                                                (begin
@@ -667,7 +717,7 @@
                                                                  (self 'update-track-view)))))
 
       ; Update status of the components.
-      (gui-invoke-later  (lambda () (self 'update-track-view))))))
+      (gui-invoke-later  (lambda () (pulsar-tethered) (self 'update-track-view))))))
 
 (define simple-track-factory (xnew TrackFactoryAdapter "Simple-Track" SimpleTrack ))
 
@@ -716,6 +766,7 @@
 (import (lamu utils gui))
 (define create-gui
   (lambda()
+    (pulsar-tethered)
 ;    (gui-remove-all (gui-get-pane))
 ;    (gui-frame-width 800)
 ;    (gui-frame-height 600)
@@ -757,6 +808,7 @@
       ; DOCUMENT ABOUT THIS
       (if #t
         (lambda (self ::javax.swing.JPanel )
+          (pulsar-tethered)
           (self:setBorder (javax.swing.BorderFactory:createTitledBorder "Sequencer" )))
         (lambda (self)
           #f))
@@ -766,24 +818,31 @@
       (gui-build 
         (gui-new 'panel 'box javax.swing.BoxLayout:Y_AXIS )
         (lambda (self ::javax.swing.JPanel)
+          (pulsar-tethered)
           (self:setBorder (javax.swing.BorderFactory:createTitledBorder "Tools" )))
         'name "TRACKSET-MANAGEMENT"
         (gui-build
           (gui-new 'panel 'box javax.swing.BoxLayout:X_AXIS )
           (lambda (self ::javax.swing.JPanel)
+            (pulsar-tethered)
             (self:setBorder (javax.swing.BorderFactory:createTitledBorder "Trackset Management" ))) 
-          ; (lambda (self) (self:setPreferredSize (java.awt.Dimension 100 100)))
+          ; (lambda (self) (pulsar-tethered) (self:setPreferredSize (java.awt.Dimension 100 100)))
+          
           (gui-new 'button "Create"     (lambda (sel cmd usr src evt) 
+                                          (pulsar-tethered)
                                           (trackset-manager 'new-trackset)))
 
 
 
           (gui-new 'button "Activate"   (lambda (sel cmd usr src evt)
+                                          (pulsar-tethered)
                                           ((trackset-manager 'current-trackset) 'set-enabled #t)))
 
           (gui-new 'button "Deactivate" (lambda (sel cmd usr src evt)
+                                          (pulsar-tethered)
                                           ((trackset-manager 'current-trackset) 'set-enabled #f)))
           (gui-new 'button "Source"     (lambda (sel cmd usr src evt)
+                                          (pulsar-tethered)
                                           (gui-insert-text
                                             (string-append
                                               (prettify
@@ -796,10 +855,12 @@
 
           (javax.swing.Box:createHorizontalGlue )
           (gui-new 'button "Clear"      (lambda (sel cmd usr src evt) 
+                                          (pulsar-tethered)
                                           (let ((current-trackset (trackset-manager 'current-trackset)))
                                             (current-trackset 'clear-trackset )
                                             (current-trackset 'update-trackset-view ))))
           (gui-new 'button "Destroy"    (lambda (sel cmd usr src evt) 
+                                          (pulsar-tethered)
                                           (trackset-manager 'remove-trackset 
                                                             (trackset-manager 'current-trackset))))
           )
@@ -807,9 +868,11 @@
         (gui-build
          (gui-new 'panel 'box javax.swing.BoxLayout:X_AXIS )
          (lambda (self ::javax.swing.JPanel)
+           (pulsar-tethered)
            (self:setBorder (javax.swing.BorderFactory:createTitledBorder "Track Construction" )))
          ; (lambda (self) (self:setMaximumSize (java.awt.Dimension 100 100)))
          (gui-new 'button "Simple-Track"  (lambda (sel cmd usr src evt) 
+                                            (pulsar-tethered)
                                             ((trackset-manager 'current-trackset) 'add-track 
                                                (xnew SimpleTrack (new-track-id)))))
          (javax.swing.Box:createHorizontalGlue ))
@@ -818,6 +881,7 @@
         (gui-build
           (gui-new 'panel 'box javax.swing.BoxLayout:X_AXIS )
           (lambda (self ::javax.swing.JPanel)
+            (pulsar-tethered)
             (self:setBorder (javax.swing.BorderFactory:createTitledBorder "Trackset Selection" )))
           ; (lambda (self) (self:setMaximumSize (java.awt.Dimension 100 100)))
           (javax.swing.Box:createHorizontalGlue ))
