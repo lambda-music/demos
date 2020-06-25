@@ -1,3 +1,4 @@
-[submodule "quasijazzer-band"]
-	path = quasijazzer-band
-	url = https://github.com/lisp-scheme-music/quasijazzer-band.git
+[submodule "libquasijazzer"]
+	path = libquasijazzer
+	url = https://github.com/lambda-music/libquasijazzer.git
+	branch = master-v1
