@@ -2,29 +2,17 @@
 "create + scheme + gui $*{$}"
 
 (import (srfi 1))
-(let loop ((i (iota 10000)))
-  (if (null? i )
-      '()
-      (cons (car i) (loop (cdr i)))))
-
-((java.lang.Thread:current-thread):is-interrupted)
- 
-(define a (unfold 
-           (lambda (x) ((java.lang.Thread:current-thread):is-interrupted))
-           (lambda (x) (* 2 x))
-           (lambda (x) (+ x 1))
-           1))
-
 
 (define (drum-machine-start)
   (if (not (open?))
-    (begin
-      (import (lamu lang))
-      (import (lamu utils gui))
-      (use "pulsar-pattern-generator.scm" )
-      (session-start)
-      (create-gui)
-      (set-playing #t))))
+      (begin
+       (import (lamu lang))
+       (import (lamu utils gui))
+       (use "pulsar-pattern-generator.scm" )
+       (session-start)
+       (create-gui)
+       (exet (mant 'rept (selt 'newt (newt 'main 12))))
+       (set-playing #t))))
 
 (define (drum-machine-stop)
   (if (open?)
@@ -33,6 +21,14 @@
       ))
 
 (drum-machine-start)
+
+(exet (selt 'name 'main))
+(exet (selt 'all))
+
+
+
+
+
 
 (if #f (begin
         ((trackset-manager 'new-trackset) 'add-track 

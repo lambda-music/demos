@@ -498,21 +498,27 @@
                                     (eval (read (open-input-string (self 'read 'beat-offset)))))
                                   (enabled       (self 'read 'enabled)))
                               (if enabled
-                                (exet (putt (newt track-id 
-                                                  (lambda ()
-                                                    (pulsar-tethered)
-                                                    (let ((notes (n-swing beat-count measure-count 
-                                                                          (bind-pns (cdr (sym2val instrument inst-list )) 
-                                                                                    (cdr (sym2val pns-pattern pns-list )))) ))
-                                                      ; The notes object contains non-note objects, too.
-                                                      ; So we have to filter the list. 
-                                                      (n velo: << (lm (+ 1  (nc notes)) velo-values ) notes)
-                                                      ;notes ;;; comment out now (n) duplicates notation data.
-                                                      ;;; (Thu, 08 Aug 2019 18:50:26 +0900)
-                                                      )))
-                                            'parallel (get-track 'main) beat-offset))
-                                (let ((t (get-track track-id)))
-                                  (if t (exet (remove-track t )))))
+                                (exet (mant 'rept (selt 'newt (newt track-id 
+                                                                    ; Note that it requires a factory procedure of a procedure.
+                                                                    ; (Fri, 26 Jun 2020 06:06:08 +0900)
+                                                                    (lambda()
+                                                                      (lambda ()
+                                                                        (pulsar-tethered)
+                                                                        (let ((notes (n-swing beat-count measure-count 
+                                                                                              (bind-pns (cdr (sym2val instrument inst-list )) 
+                                                                                                        (cdr (sym2val pns-pattern pns-list )))) ))
+                                                                          ; The notes object contains non-note objects, too.
+                                                                          ; So we have to filter the list. 
+                                                                          (n velo: << (lm (+ 1  (nc notes)) velo-values ) notes)
+                                                                          ;notes ;;; comment out now (n) duplicates notation data.
+                                                                          ;;; (Thu, 08 Aug 2019 18:50:26 +0900)
+                                                                          )))
+                                                                    (synct 'parallel (selt 'name 'main) beat-offset)
+                                                                    (synct 'parallel (selt 'name 'main) beat-offset)))
+                                            (synct 'parallel (selt 'name 'main) beat-offset)
+                                            (synct 'parallel (selt 'name 'main) beat-offset)
+                                            ))
+                                (exet (mant 'remove (selt 'name track-id ))))
                               #t))))
 
       (self 'define 'field 'track-id             track-id )
@@ -931,7 +937,7 @@
     (trackset-manager 'register-track-factory simple-track-factory )
     ))
 
-(newline)
+
 
 (if #f
     (begin
