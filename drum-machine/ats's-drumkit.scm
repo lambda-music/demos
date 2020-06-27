@@ -15,6 +15,31 @@
 (import (srfi 1))
 (import (kawa pprint))
 
+
+;; moved from music.scm (Sat, 27 Jun 2020 09:28:38 +0900)
+(define make-perc (lambda (port chan note len)
+                    (lambda (mark enab  pos velo . args )
+                      (let ((port port)
+                            (chan chan)
+                            (note note)
+                            (len len)
+                            (args args )) 
+                        (if (not (null? args)) 
+                          (begin
+                            (set! len (car args))
+                            (set! args (cdr args))))
+
+                        (list (cons 'type 'note  )
+                              (cons 'mark  mark )
+                              (cons 'enab  enab )
+                              (cons 'port  port )
+                              (cons 'chan  chan )
+                              (cons 'pos   pos  )
+                              (cons 'note  note )
+                              (cons 'len   len  )
+                              (cons 'velo  velo ))))))
+
+
 ; n= a number of swing sequences ( c8 r8 c8 c8 ) which length usually equals to a halftone.
 ; ex (n-swing 2 1) generates the orthodox swing pattern which consists 4 quarter tones.
 ;
