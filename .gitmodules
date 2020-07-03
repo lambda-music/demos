@@ -6,3 +6,7 @@
 	path = libinst
 	url = https://github.com/lambda-music/libinst.git
 	branch = master
+[submodule "libnewp"]
+	path = libnewp
+	url = https://github.com/lambda-music/libnewp.git
+	branch = master
