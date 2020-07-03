@@ -504,14 +504,23 @@
                                                                     (lambda()
                                                                       (lambda ()
                                                                         (pulsar-tethered)
-                                                                        (let ((notes (n-swing beat-count measure-count 
-                                                                                              (bind-pns (cdr (sym2val instrument inst-list )) 
-                                                                                                        (cdr (sym2val pns-pattern pns-list )))) ))
-                                                                          ; The notes object contains non-note objects, too.
-                                                                          ; So we have to filter the list. 
-                                                                          (n velo: << (lm (+ 1  (nc notes)) velo-values ) notes)
-                                                                          ;notes ;;; comment out now (n) duplicates notation data.
-                                                                          ;;; (Thu, 08 Aug 2019 18:50:26 +0900)
+                                                                        (let* ((inst-proc (cdr (sym2val instrument  inst-list )))
+                                                                               (pns-proc  (cdr (sym2val pns-pattern pns-list )))
+                                                                               (notes     (inst-proc (n-swing 
+                                                                                                       beat-count 
+                                                                                                       measure-count 
+                                                                                                       pns-proc))))
+
+                                                                          ;; ; The notes object contains non-note objects, too.
+                                                                          ;; ; So we have to filter the list. 
+                                                                          ;; (n velo: << (lm (+ 1  (nc notes)) velo-values ) notes)
+                                                                          ;; ;notes ;;; comment out now (n) duplicates notation data.
+                                                                          ;; ;;; (Thu, 08 Aug 2019 18:50:26 +0900)
+
+                                                                          ; a new version is created (Thu, 02 Jul 2020 19:57:59 +0900)
+                                                                          (n join: 'inner velo: velo-values notes)
+                                                                          ; Now n default to limit the length of the note list. (Fri, 03 Jul 2020 15:51:56 +0900)
+                                                                          ; (n join: 'inner velo: (lm (+ 1  (nc notes)) velo-values ) notes)
                                                                           )))
                                                                     (synct 'parallel (selt 'name 'main) beat-offset)
                                                                     (synct 'parallel (selt 'name 'main) beat-offset)))

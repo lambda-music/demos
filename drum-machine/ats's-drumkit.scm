@@ -171,12 +171,23 @@
     ( inst-Dununba1-Bell-Mute .    ( "Dununba1 Bell Mute" .       109 ))
 ))
 
+; (lambda (notes) (n note: note-number notes ))
+
 (define inst-list (map (lambda (x)
-                         (cons (car x) 
-                               (cons (cadr x)
-                                     (make-perc 0 0 (cddr x) 1/8 )
-                                     )))
+                         (cons 
+                           (car x) 
+                           (cons (cadr x)
+                                 (let ((note-number (cddr x)))
+                                   (lambda (notes) (n note: note-number notes ))))))
                        h2-inst-database ))
+
+; (begin
+;   (set! inst-list (cons 
+;                     'counting-voice
+;                     (cons
+;                       "Counting Voice"
+;                       (lambda (notes)
+;                         (n join: 'inner note: (iota 30 C4) notes))))))
 
 (define (sym2val s lst)
   (if (not (symbol? s))
@@ -206,53 +217,39 @@
 ;
 ; We call the procedure "pns-function".
 (define pns-list
-  `((pns-two-four         .  ( "2-4 Beat"    . ,(lambda (inst0 x n) 
+  `((pns-two-four         .  ( "2-4 Beat"    . ,(lambda (x m) 
+                                                  (append
+                                                    (n type: 'note mark: 'A enab: #t           pos: (/ 2 4) velo:  (+ 0.5  (rnd -0.0  0.1 )))))))
+
+    (pns-basic-one        .  ( "1 Beat"      . ,(lambda (x m) 
+                                                  (append
+                                                    (n type: 'note mark: 'A enab: (luck 1.00 ) pos: 0       velo: (+ 0.3  (rnd -0.0  0.1 )))))))
+
+    (pns-basic-4-swing    .  ( "4-Swing"     . ,(lambda (x m) 
+                                                  (append
+                                                    (n type: 'note mark: 'A enab: (luck 1.00 ) pos: (/ 0 4) velo: (+ 0.3  (rnd -0.0  0.1 )))
+                                                    (n type: 'note mark: 'A enab: (luck 0.00 ) pos: (/ 1 4) velo: (+ 0.5  (rnd -0.0  0.1 )))
+                                                    (n type: 'note mark: 'A enab: (luck 1.00 ) pos: (/ 2 4) velo: (+ 0.3  (rnd -0.0  0.1 )))
+                                                    (n type: 'note mark: 'A enab: (luck 1.00 ) pos: (/ 3 4) velo: (+ 0.5  (rnd -0.0  0.3 )))))) )
+
+    (pns-basic-6-swing    .  ( "6-Swing"     . ,(lambda (x m) 
+                                                  (append
+                                                    (n type: 'note mark: 'A enab: (luck 1.00 ) pos: (/ 0 6) velo: (+ 0.3  (rnd -0.0  0.1 )))
+                                                    (n type: 'note mark: 'A enab: (luck 0.00 ) pos: (/ 2 6) velo: (+ 0.3  (rnd -0.0  0.1 )))
+                                                    (n type: 'note mark: 'A enab: (luck 1.00 ) pos: (/ 3 6) velo: (+ 0.3  (rnd -0.0  0.1 )))
+                                                    (n type: 'note mark: 'A enab: (luck 1.00 ) pos: (/ 5 6) velo: (+ 0.5  (rnd -0.0  0.3 ))))))) 
+
+    (pns-basic-5-swing    .  ( "5-Swing"     . ,(lambda (x m) 
+                                                  (append
+                                                    (n type: 'note mark: 'A enab: (luck 1.00 ) pos: (/ 0 5) velo: (+ 0.3  (rnd -0.0  0.1 )))
+                                                    (n type: 'note mark: 'A enab: (luck 0.00 ) pos: (/ 1 5) velo: (+ 0.3  (rnd -0.0  0.1 )))
+                                                    (n type: 'note mark: 'A enab: (luck 1.00 ) pos: (/ 2 5) velo: (+ 0.3  (rnd -0.0  0.1 )))
+                                                    (n type: 'note mark: 'A enab: (luck 0.00 ) pos: (/ 3 5) velo: (+ 0.3  (rnd -0.0  0.1 )))
+                                                    (n type: 'note mark: 'A enab: (luck 1.00 ) pos: (/ 4 5) velo: (+ 0.5  (rnd -0.0  0.3 )))))))
+
+    (pns-ntime            .  ( "pns-ntime"   . ,(lambda (x m) 
                                                   (list
-                                                    (inst0 'A           #t (/ 2 4) (+ 0.5  (rnd -0.0  0.1 )))))) )
-
-    (pns-basic-one        .  ( "1 Beat"      . ,(lambda (inst0 x n) 
-                                                  (list
-                                                    (inst0 'A (luck 1.00 ) 0 (+ 0.3  (rnd -0.0  0.1 )))))) )
-
-    (pns-basic-4-swing    .  ( "4-Swing"     . ,(lambda (inst0 x n) 
-                                                  (list
-                                                    (inst0 'A (luck 1.00 ) (/ 0 4) (+ 0.3  (rnd -0.0  0.1 )))
-                                                    (inst0 'A (luck 0.00 ) (/ 1 4) (+ 0.5  (rnd -0.0  0.1 )))
-                                                    (inst0 'A (luck 1.00 ) (/ 2 4) (+ 0.3  (rnd -0.0  0.1 )))
-                                                    (inst0 'A (luck 1.00 ) (/ 3 4) (+ 0.5  (rnd -0.0  0.3 )))))) )
-
-    (pns-basic-6-swing    .  ( "6-Swing"     . ,(lambda (inst0 x n) 
-                                                  (list
-                                                    (inst0 'A (luck 1.00 ) (/ 0 6) (+ 0.3  (rnd -0.0  0.1 )))
-                                                    (inst0 'A (luck 0.00 ) (/ 2 6) (+ 0.3  (rnd -0.0  0.1 )))
-                                                    (inst0 'A (luck 1.00 ) (/ 3 6) (+ 0.3  (rnd -0.0  0.1 )))
-                                                    (inst0 'A (luck 1.00 ) (/ 5 6) (+ 0.5  (rnd -0.0  0.3 ))))))) 
-
-    (pns-basic-5-swing    .  ( "5-Swing"     . ,(lambda (inst0 x n) 
-                                                  (list
-                                                    (inst0 'A (luck 1.00 ) (/ 0 5) (+ 0.3  (rnd -0.0  0.1 )))
-                                                    (inst0 'A (luck 0.00 ) (/ 1 5) (+ 0.3  (rnd -0.0  0.1 )))
-                                                    (inst0 'A (luck 1.00 ) (/ 2 5) (+ 0.3  (rnd -0.0  0.1 )))
-                                                    (inst0 'A (luck 0.00 ) (/ 3 5) (+ 0.3  (rnd -0.0  0.1 )))
-                                                    (inst0 'A (luck 1.00 ) (/ 4 5) (+ 0.5  (rnd -0.0  0.3 )))))) )
-
-    (pns-ntime            .  ( "pns-ntime"   .          ,(lambda (inst0 x n) 
-                                                           (list
-                                                             (inst0 'A (luck 1.00 ) (/ 0 4) (+ 0.3  (rnd -0.0  0.1 )))))) )
-
-    (pns-counting         .  ( "Count Beat"  . ,(lambda (dummy-inst x n)
-                                                  (list
-                                                    (let ((cnt (list-ref count-voices x)))
-                                                      (cnt '(A) #t 0 (rnd 0.5 0.7 )))))))
-
-    (create-count-measure . ( "Count Bar"    .  ,(lambda (nm)
-                                                   (append
-                                                     (map
-                                                       (lambda (n)
-                                                         (let ((cnt (list-ref count-voices n)))
-                                                           (cnt '(A) #t (/ n nm ) (rnd 0.5 0.7 ))))
-                                                       (iota nm))
-                                                     (list (len 1))))))))
+                                                    (n mark: 'A enab: (luck 1.00 ) pos: (/ 0 4) velo: (+ 0.3  (rnd -0.0  0.1 )))))))))
 
 
 (define main-track-sequence (lambda () (list (len 4/4))))
