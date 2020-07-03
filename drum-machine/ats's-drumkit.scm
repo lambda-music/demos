@@ -15,31 +15,6 @@
 (import (srfi 1))
 (import (kawa pprint))
 
-
-;; moved from music.scm (Sat, 27 Jun 2020 09:28:38 +0900)
-(define make-perc (lambda (port chan note len)
-                    (lambda (mark enab  pos velo . args )
-                      (let ((port port)
-                            (chan chan)
-                            (note note)
-                            (len len)
-                            (args args )) 
-                        (if (not (null? args)) 
-                          (begin
-                            (set! len (car args))
-                            (set! args (cdr args))))
-
-                        (list (cons 'type 'note  )
-                              (cons 'mark  mark )
-                              (cons 'enab  enab )
-                              (cons 'port  port )
-                              (cons 'chan  chan )
-                              (cons 'pos   pos  )
-                              (cons 'note  note )
-                              (cons 'len   len  )
-                              (cons 'velo  velo ))))))
-
-
 ; n= a number of swing sequences ( c8 r8 c8 c8 ) which length usually equals to a halftone.
 ; ex (n-swing 2 1) generates the orthodox swing pattern which consists 4 quarter tones.
 ;
@@ -60,18 +35,10 @@
                                    (ns-proc x n))))
                      (iota n )))))))
 
-; ====================================================================================
-; bind-pns
-; This procedure binds a pnsprocedure with an instrument procedure and returns
-; ns-proc. The term "pns" stands for plain n-swing.
-(define bind-pns (lambda (inst pns-proc) 
-                       (lambda (x n)
-                         (pns-proc inst x n))))
-
-
 ;==============================================================================================
 ; INSTRUMENTALS
 ;==============================================================================================
+
 (define key-name-value-list-to-name-value-list 
   (lambda ( key-name-value-list )
     (map 
@@ -168,8 +135,7 @@
     ( inst-Kenkeni1-Bell-Hit .     ( "Kenkeni1 Bell Hit" .        106 ))
     ( inst-Kenkeni1-Bell-Mute .    ( "Kenkeni1 Bell Mute" .       107 ))
     ( inst-Dununba1-Bell .         ( "Dununba1 Bell" .            108 ))
-    ( inst-Dununba1-Bell-Mute .    ( "Dununba1 Bell Mute" .       109 ))
-))
+    ( inst-Dununba1-Bell-Mute .    ( "Dununba1 Bell Mute" .       109 ))))
 
 ; (lambda (notes) (n note: note-number notes ))
 
@@ -181,30 +147,12 @@
                                    (lambda (notes) (n note: note-number notes ))))))
                        h2-inst-database ))
 
-; (begin
-;   (set! inst-list (cons 
-;                     'counting-voice
-;                     (cons
-;                       "Counting Voice"
-;                       (lambda (notes)
-;                         (n join: 'inner note: (iota 30 C4) notes))))))
-
 (define (sym2val s lst)
   (if (not (symbol? s))
     (raise (cons 'invalid-argument-exception s  ) ))
   (cdr (or (assq s lst)
            (raise (string-append "instrumental not found error "
                                  (symbol->string s))))))
-
-; ADDED (Wed, 31 Jul 2019 19:53:22 +0900)
-(define (counting-voice x)
-  (make-perc 1 0 (+ C4  x)  1/4 ))
-
-(define count-voices 
-  (map 
-    (lambda (x)
-      (make-perc 1 0 (+ C4  x)  1/4 ))
-    (iota 20)))
 
 ; ===========================================================================================
 ; RHYTHM_PATTERNS
@@ -258,7 +206,6 @@
                (newline-warn)
                (put-track  (new-track 'main (lambda args
                                               (apply main-track-sequence args ))))))
-
 
 
 

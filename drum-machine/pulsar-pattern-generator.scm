@@ -518,9 +518,10 @@
                                                                           ;; ;;; (Thu, 08 Aug 2019 18:50:26 +0900)
 
                                                                           ; a new version is created (Thu, 02 Jul 2020 19:57:59 +0900)
-                                                                          (n join: 'inner velo: velo-values notes)
+                                                                          ; (n join: 'inner velo: velo-values notes)
                                                                           ; Now n default to limit the length of the note list. (Fri, 03 Jul 2020 15:51:56 +0900)
-                                                                          ; (n join: 'inner velo: (lm (+ 1  (nc notes)) velo-values ) notes)
+                                                                          ; Gave up to limit circular-list by `n-proc` for now (Fri, 03 Jul 2020 16:38:31 +0900)
+                                                                          (n join: 'inner velo: (lm (+ 1  (nc notes)) velo-values ) notes)
                                                                           )))
                                                                     (synct 'parallel (selt 'name 'main) beat-offset)
                                                                     (synct 'parallel (selt 'name 'main) beat-offset)))
