@@ -1,4 +1,0 @@
-[submodule "libquasijazzer"]
-	path = libquasijazzer
-	url = https://github.com/lambda-music/libquasijazzer.git
-	branch = master-v1
