@@ -17,8 +17,7 @@
 (import (lamu lang))
 (import (lamu utils gui))
 (import (lamu xnoop))
-(use "ats's-drumkit.scm" )
-(use "libh2jazzy")
+(use "drumkit.scm" )
 (define pulsar-tethered (tether))
 
 ;==============================================================================================
@@ -452,7 +451,7 @@
   (lambda ( self 
             track-id
             #!optional 
-            (in-instrument  'inst-Kick-Long )
+            (in-instrument  'h2j-Kick-Long )
             (in-pns-pattern 'pns-basic-one )
             (in-velo-values "(cl 2/4 2/4 2/4 3/4 )" )
             (in-beat-offset "(+ -0/4 -0/32)" )

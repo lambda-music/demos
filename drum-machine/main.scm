@@ -3,8 +3,7 @@
 
 (import (lamu lang))
 (import (lamu utils gui))
-(use "libh2jazzy" )
-(use "pulsar-pattern-generator.scm" )
+(use "rhythm-pattern-generator.scm" )
 
 (define h2j-handles  '())
 (define (drum-machine-start)
