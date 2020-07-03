@@ -18,7 +18,7 @@
 (import (lamu utils gui))
 (import (lamu xnoop))
 (use "ats's-drumkit.scm" )
-(use "libquasijazzer/init.scm")
+(use "libh2jazzy")
 (define pulsar-tethered (tether))
 
 ;==============================================================================================
