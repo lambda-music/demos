@@ -20,9 +20,10 @@
 
 (define (drum-machine-stop)
   (if (open?)
-      (set-playing #f)
-      (map (cut apply <> '()) h2j-handles )
-      (close)))
+      (begin
+       (set-playing #f)
+       (map (cut apply <> '()) h2j-handles )
+       (close))))
 
 (drum-machine-start)
 (drum-machine-stop)
