@@ -1,78 +1,6 @@
 #!/usr/bin/lamu 
 "create + scheme + gui $*{$}"
 
-(n velo: 1 2 3 join: 'inner )
-
-
-(n type: 'note (n  velo: 1 3 4 5 6 velo: 5 6 7 pos: 3 4 5 ))
-
-(assq 'a '(1 ))
-
-(n type: 'note velo: 111
-    (n  velo: 1 3 4 5 6 velo: 1 2 3  pos: 3 4 5  ) )
-(((type . note) (pos . 3) (velo . 111))
-((type . note) (pos . 4) (velo . 111))
-((type . note) (pos . 5) (velo . 111))
-((type . note) (velo . 111))
-((type . note) (velo . 111))
-((type . note) (velo . 111))
-((type . note) (velo . 111))
-((type . note) (velo . 111)))
-
-(n type: 'note velo: 111 velo: 1 3 4 5 6 velo: 1 2 3  pos: 3 4 5  )
-(((type . note) (pos . 3) (velo . 111))
- ((pos . 4) (velo . 1))
-   ((pos . 5) (velo . 3))
-   ((velo . 4))
-   ((velo . 5))
-   ((velo . 6))
-   ((velo . 1))
-   ((velo . 2))
-   ((velo . 3)))
-
-(((type . note) (pos . 3) (velo . 111))
- ((pos . 4) (velo . 11))
-   ((pos . 5) (velo . 11))
-   ((velo . 11))
-   ((velo . 6))
-   ((velo . 1))
-   ((velo . 2))
-   ((velo . 3)))
-
-(n velo: 1 (melody "do re mi"))
-
-(n type: 'note 
-    (n  velo: 1 3 4 5 6 velo: 1 2 3  pos: 3 4 5  ) )
-(((type . note) (pos . 3) (velo . 1))
-((type . note) (pos . 4) (velo . 3))
-((type . note) (pos . 5) (velo . 4))
-((type . note) (velo . 5))
-((type . note) (velo . 6))
-((type . note) (velo . 1))
-((type . note) (velo . 2))
-((type . note) (velo . 3)))
-
-
-(((type . note) (pos . 3) (velo . 1))
-((type . note) (pos . 4) (velo . 2))
-((type . note) (pos . 5) (velo . 3))
-((type . note) (velo . 5))
-((type . note) (velo . 6)))
-
-(((pos . 3) (velo . 1)) ((pos . 4) (velo . 2)) ((pos . 5) (velo . 3)) ((velo
-. 5)) ((velo . 6)))
-
-(((type . #f) (pos . 3) (velo . 1))
-((type . #f) (pos . 4) (velo . 2))
-((type . #f) (pos . 5) (velo . 3))
-((type . #f) (pos . 3) (velo . 5))
-((type . #f) (pos . 3) (velo . 6)))
-
-(n  velo: 1 
- )
-
-
-
 (import (lamu lang))
 (import (lamu utils gui))
 (use "libh2jazzy" )
@@ -103,7 +31,6 @@
 (exet (selt 'all))
 
 (set-tempo 150)
-
 
 
 
