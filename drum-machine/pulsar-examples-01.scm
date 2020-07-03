@@ -72,30 +72,29 @@
  )
 
 
-(import (srfi 1))
+
 (import (lamu lang))
 (import (lamu utils gui))
+(use "libh2jazzy" )
+(use "pulsar-pattern-generator.scm" )
+
 (define h2j-handles  '())
 (define (drum-machine-start)
   (if (not (open?))
-      (begin
-       (import (lamu lang))
-       (import (lamu utils gui))
-       (use "libh2jazzy" )
-       (use "pulsar-pattern-generator.scm" )
+      (begin 
        (open "drum-machine")
        (sleep 1000)
-       (open-output "h2")
-       (sleep 1000)
        (set! h2j-handles  (cons (h2j-start "drum-machine" "h2" "hydrogen-midi" "RX") h2j-handles))
+       (sleep 1000)
        (create-gui)
        (exet (mant 'rept (selt 'newt (newt 'main 12))))
        (set-playing #t))))
 
 (define (drum-machine-stop)
   (if (open?)
-    (map (cut apply <> '()) h2j-handles )
-    (close)))
+      (set-playing #f)
+      (map (cut apply <> '()) h2j-handles )
+      (close)))
 
 (drum-machine-start)
 (drum-machine-stop)
@@ -103,7 +102,7 @@
 (exet (selt 'name 'main))
 (exet (selt 'all))
 
-(set-tempo 100)
+(set-tempo 150)
 
 
 
